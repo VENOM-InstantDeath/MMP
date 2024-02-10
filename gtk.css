@@ -1,0 +1,41 @@
+label {
+	color: white;
+}
+
+#mainwindow {
+	background-color: black;
+}
+
+#btmenu {
+	background-color: black;
+	border-radius: 0;
+	padding: 0px;
+	padding: 0 10px;
+}
+
+#title {
+	background-color: #DD1414;
+}
+
+#sections {
+	background-color: #4B4343;
+}
+#bar {
+	background-color: blue;
+}
+
+#btsec {
+	background-color: #4B4343;
+	border-radius: 0;
+	border-right: none;
+	border-bottom: none;
+}
+
+#nosongbox {
+	background-color: #4B4343;
+	border-radius: 20px;
+	padding: 10px;
+}
+
+#nosonglabel1 {margin-top: 20px;}
+#nosonglabel2 {margin-bottom: 10px;}
