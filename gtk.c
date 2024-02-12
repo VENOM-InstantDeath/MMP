@@ -3,17 +3,27 @@
 #include <string.h>
 #include "vector.h"
 
-struct {
-	char** name;
+struct Song {
+	char* name;
+	char* duration;
+	char* year;
+	char* file;
+};
+
+struct Album {
+	char* name;
 	char** songs;
-} Playlists;
+};
+
+struct Artist {
+	char* name;
+	vector albums;
+};
 
 struct {
-	struct {
-		char** songs;
-	} *albums;
-} Artists;
-
+	vector name;
+	vector songs;
+} Playlists;
 
 int endswith(char* string, char* p) {
 	char* tmp = strrchr(string, '.');
@@ -35,13 +45,24 @@ int scan_dir(char* path) {
 	return c;
 }
 
-int main(int argc, char** argv) {
+GtkWidget* MusicItem() {
+	GtkWidget* wdg = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
+	gtk_widget_set_name(wdg, "wdg");
+
+	GtkWidget* mname = gtk_label_new("Song");
+
+	gtk_container_add(GTK_CONTAINER(wdg), mname);
+	gtk_widget_show_all(wdg);
+	return wdg;
+}
+
+void activate(GtkApplication* app, gpointer data) {
+
 	GtkBuilder* builder = gtk_builder_new();
 	GError* error = NULL;
-
-	gtk_init(&argc, &argv);
 	int res = gtk_builder_add_from_file(builder, "gtk.ui", &error);
 	GObject* window = gtk_builder_get_object(builder, "mainwindow");
+	GObject* mainlayout = gtk_builder_get_object(builder, "mainlayout");
 	GObject* nosongbox = gtk_builder_get_object(builder, "nosongbox");
 	GObject* nosongicon = gtk_builder_get_object(builder, "nosongicon");
 
@@ -52,12 +73,28 @@ int main(int argc, char** argv) {
 	gtk_css_provider_load_from_path(provider, "gtk.css", NULL);
 	gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),GTK_STYLE_PROVIDER(provider),GTK_STYLE_PROVIDER_PRIORITY_USER);
 
-	g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-	puts("\tAbout to start main");
+	gtk_window_set_application(GTK_WINDOW(window), GTK_APPLICATION(app));
+
+	Playlists.name = vector_init(VSTRLIST);
+	Playlists.songs = vector_init(VGEN);
+	vector Artists = vector_init(VGEN);
 
 	if (!scan_dir(".")) {
 		gtk_widget_set_visible(GTK_WIDGET(nosongbox), 1);
+	} else {
+		/*Render list of songs on dir*/
+		gtk_container_add(GTK_CONTAINER(mainlayout), MusicItem());
+		gtk_container_add(GTK_CONTAINER(mainlayout), MusicItem());
 	}
+}
 
-	gtk_main();
+int main(int argc, char** argv) {
+	GtkApplication* app = gtk_application_new("org.hu.gtktest", G_APPLICATION_DEFAULT_FLAGS);
+	int status;
+
+	g_signal_connect(app, "activate", G_CALLBACK(activate), NULL);
+
+	status = g_application_run(G_APPLICATION(app), argc, argv);
+
+	//g_object_unref(app);
 }
