@@ -15,6 +15,7 @@ label {
 
 #title {
 	background-color: #DD1414;
+	font-size: 20px;
 }
 
 #sections {
@@ -41,16 +42,19 @@ label {
 #nosonglabel2 {margin-bottom: 10px;}
 
 #wdg {
-	background-color: #4B4343;
-
 	margin-top: 15px;
 	margin-left: 15px;
 	margin-right: 15px;
-
-	border-radius: 10px;
 
 	padding-top: 5px;
 	padding-bottom: 5px;
 	padding-left: 10px;
 	padding-right: 10px;
+}
+#songname {font-size: 22px;}
+#songmenu {
+	border-radius: 0px;
+	padding: 0px;
+	border-width: 0px;
+	font-size: 20px;
 }

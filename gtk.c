@@ -1,7 +1,8 @@
 #include <gtk/gtk.h>
 #include <dirent.h>
 #include <string.h>
-#include "vector.h"
+#include "libvector/vector.h"
+#include "tagreader/tagreader.h"
 
 struct Song {
 	char* name;
@@ -31,12 +32,12 @@ int endswith(char* string, char* p) {
 	return 0;
 }
 
-int scan_dir(char* path) {
+int scan_dir(char* path, vector* Artists) {
 	DIR* dir = opendir(path);
 	struct dirent* dt;
 	int c=0;
 	while ((dt = readdir(dir))) {
-		if (!endswith(dt->d_name, ".mp3") && !endswith(dt->d_name, ".wav")) continue;
+		if (!endswith(dt->d_name, ".mp3")) continue;
 		/*
 		 * add song to artists
 		 */
@@ -45,13 +46,27 @@ int scan_dir(char* path) {
 	return c;
 }
 
-GtkWidget* MusicItem() {
+GtkWidget* MusicItem(char* song, char* album, char* artist, char* duration) {
 	GtkWidget* wdg = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
 	gtk_widget_set_name(wdg, "wdg");
+	GtkWidget* vertbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+	gtk_widget_set_hexpand(vertbox, 1);
 
-	GtkWidget* mname = gtk_label_new("Song");
+	GtkWidget* mname = gtk_label_new(song); gtk_widget_set_name(mname, "songname");
+	gtk_label_set_xalign(GTK_LABEL(mname),0);
+	string mp3data = string_init(NULL);string_append_fmt(&mp3data, "%s - %s", artist, album);
+	GtkWidget* data = gtk_label_new(string_get_c_str(&mp3data));
+	gtk_label_set_xalign(GTK_LABEL(data), 0);
+	GtkWidget* wduration = gtk_label_new(duration);
+	GtkWidget* songmenu = gtk_button_new_with_label("󰇙");
+	gtk_widget_set_name(songmenu, "songmenu");
 
-	gtk_container_add(GTK_CONTAINER(wdg), mname);
+	gtk_container_add(GTK_CONTAINER(vertbox), mname);
+	gtk_container_add(GTK_CONTAINER(vertbox), data);
+
+	gtk_container_add(GTK_CONTAINER(wdg), vertbox);
+	gtk_container_add(GTK_CONTAINER(wdg), wduration);
+	gtk_container_add(GTK_CONTAINER(wdg), songmenu);
 	gtk_widget_show_all(wdg);
 	return wdg;
 }
@@ -79,12 +94,12 @@ void activate(GtkApplication* app, gpointer data) {
 	Playlists.songs = vector_init(VGEN);
 	vector Artists = vector_init(VGEN);
 
-	if (!scan_dir(".")) {
+	if (!scan_dir(".", &Artists)) {
 		gtk_widget_set_visible(GTK_WIDGET(nosongbox), 1);
 	} else {
 		/*Render list of songs on dir*/
-		gtk_container_add(GTK_CONTAINER(mainlayout), MusicItem());
-		gtk_container_add(GTK_CONTAINER(mainlayout), MusicItem());
+		gtk_container_add(GTK_CONTAINER(mainlayout), MusicItem("Unity", "TheFatRat", "Unity", "03:00"));
+		gtk_container_add(GTK_CONTAINER(mainlayout), MusicItem("Serpentine", "Disturbed", "Asylum", "04:09"));
 	}
 }
 
