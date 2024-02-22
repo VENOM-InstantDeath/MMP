@@ -77,11 +77,11 @@ void activate(GtkApplication* app, gpointer data) {
 	GError* error = NULL;
 	int res = gtk_builder_add_from_file(builder, "gtk.ui", &error);
 	GObject* window = gtk_builder_get_object(builder, "mainwindow");
-	GObject* mainlayout = gtk_builder_get_object(builder, "mainlayout");
+	GObject* songbox = gtk_builder_get_object(builder, "songbox");
 	GObject* nosongbox = gtk_builder_get_object(builder, "nosongbox");
 	GObject* nosongicon = gtk_builder_get_object(builder, "nosongicon");
 
-	GdkPixbuf* imgbuff = gdk_pixbuf_new_from_file_at_size("music.png", 120, 120, NULL);
+	GdkPixbuf* imgbuff = gdk_pixbuf_new_from_file_at_size("media/music.png", 120, 120, NULL);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(nosongicon), imgbuff);
 
 	GtkCssProvider* provider = gtk_css_provider_new();
@@ -94,12 +94,13 @@ void activate(GtkApplication* app, gpointer data) {
 	Playlists.songs = vector_init(VGEN);
 	vector Artists = vector_init(VGEN);
 
-	if (!scan_dir(".", &Artists)) {
+	if (!scan_dir("music", &Artists)) {
 		gtk_widget_set_visible(GTK_WIDGET(nosongbox), 1);
 	} else {
 		/*Render list of songs on dir*/
-		gtk_container_add(GTK_CONTAINER(mainlayout), MusicItem("Unity", "TheFatRat", "Unity", "03:00"));
-		gtk_container_add(GTK_CONTAINER(mainlayout), MusicItem("Serpentine", "Disturbed", "Asylum", "04:09"));
+		gtk_widget_set_visible(GTK_WIDGET(songbox), 1);
+		gtk_container_add(GTK_CONTAINER(songbox), MusicItem("Unity", "TheFatRat", "Unity", "03:00"));
+		gtk_container_add(GTK_CONTAINER(songbox), MusicItem("Serpentine", "Disturbed", "Asylum", "04:09"));
 	}
 }
 

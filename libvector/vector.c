@@ -5,6 +5,8 @@
 #include <math.h>
 #include "vector.h"
 
+#define VERSION "1.1.0"
+
 char* _error_messages[] = {
 	"NULL_STR: Se esperaba un c-string pero se obtuvo un puntero nulo",
 	"NULL_SOBJ: Se esperaba un objeto string pero se obtuvo un puntero nulo",
@@ -198,6 +200,28 @@ void string_append_fmt(string* S, char* fmt, ...) {
 	}
 	string_append(S, string_get_c_str(&Fmt));
 	va_end(argv);
+}
+
+void string_free(string* S) {
+	free(S->c_str); S->c_str=NULL;
+	S->memsize=0;
+}
+
+vector string_split(string* S, char sep) {
+	vector V = vector_init(VSTRLIST);
+	string str = string_init(NULL);
+	for (int i=0; i<S->memsize; i++) {
+		char ch = string_get_at(S, i);
+		if (ch == sep) {
+			vector_append_string(&V, string_get_c_str(&str));
+			string_free(&str);
+			str=string_init(NULL);
+		} else {
+			string_append_char(&str, ch);
+		}
+	}
+	vector_append_string(&V, string_get_c_str(&str));string_free(&str);
+	return V;
 }
 
 vector vector_init(vectype T) {

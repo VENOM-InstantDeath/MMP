@@ -58,3 +58,12 @@ label {
 	border-width: 0px;
 	font-size: 20px;
 }
+
+#player_bar {
+	/*background-color: white;*/
+	color: red;
+}
+
+#player {
+	background-color: green;
+}

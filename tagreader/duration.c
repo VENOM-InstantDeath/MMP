@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
+#include "duration.h"
+
 int get_bitrate(unsigned char c) {
 	switch (c) {
 		case 16: return 32;
@@ -30,12 +33,40 @@ int get_samplerate(unsigned char c) {
 	}
 }
 
-struct frame_data {
-	int crc;
-	int bitrate;
-	int samplerate;
-	int padding;
-};
+void write_h_to_str(int h, int m, int s, char* str) {
+	str[1] = (h%10)+'0'; h/=10;
+	str[0] = (h%10)+'0';
+	str[4] = (m%10)+'0'; m/=10;
+	str[3] = (m%10)+'0';
+	str[7] = (s%10)+'0'; s/=10;
+	str[6] = (s%10)+'0';
+}
+
+void write_m_to_str(int m, int s, char* str) {
+	str[1] = (m%10)+'0'; m/=10;
+	str[0] = (m%10)+'0';
+	str[4] = (s%10)+'0'; s/=10;
+	str[3] = (s%10)+'0';
+}
+
+char* second_to_str(int sec) {
+	int h=sec/3600;
+	int x= (sec-3600*h);
+	int m = x/60;
+	int s = x%60;
+	char* str;
+	if (h) {
+		if (h > 99) {return NULL;}
+		str = calloc(9, 1);
+		strcpy(str, "00:00:00");
+		write_h_to_str(h, m, s, str);
+	} else {
+		str = calloc(6, 1);
+		strcpy(str, "00:00");
+		write_m_to_str(m, s, str);
+    	}
+    	return str; 
+}
 
 int read_header(unsigned char* buffer, int p, struct frame_data* frdt) {
 	if (buffer[p]!=255 || (buffer[p+1]&250)!=250) {return 0;}
@@ -61,7 +92,6 @@ int duration(char* path) {
 	for (int i=0; i<st.st_size; i++) {
 		if (buffer[i] == 255) {p=i;break;}
 	}
-	printf("%d\n", p);
 	while (p != st.st_size) {
 		read_header(buffer, p, &data);
 		int frame_length = (int)((144.0*data.bitrate/data.samplerate*1000)+data.padding);
@@ -70,10 +100,5 @@ int duration(char* path) {
 		c++;
 	}
 	free(buffer);
-	printf("c: %d, sp: %d\n", c, data.samplerate);
 	return c*1152/data.samplerate;
-}
-
-int main() {
-	printf("%d\n", duration("../music/Honeythief.mp3"));
 }

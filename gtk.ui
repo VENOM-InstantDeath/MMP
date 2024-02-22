@@ -79,6 +79,14 @@
 					</object>
 				</child>
 				<child>
+					<object class="GtkBox" id="songbox">
+						<property name="visible">False</property>
+						<property name="hexpand">True</property>
+						<property name="vexpand">True</property>
+						<property name="orientation">vertical</property>
+					</object>
+				</child>
+				<child>
 					<object class="GtkBox" id="nosongbox">
 						<property name="visible">False</property>
 						<property name="hexpand">True</property>
@@ -119,6 +127,59 @@
 										</child>
 									</object>
 								</child>
+							</object>
+						</child>
+					</object>
+				</child>
+				<child>
+					<object class="GtkBox" id="player">
+						<property name="visible">True</property>
+						<property name="orientation">horizontal</property>
+						<property name="name">player</property>
+						<child>
+							<object class="GtkLabel" id="player_song_name">
+								<property name="visible">True</property>
+								<property name="label">Song1</property>
+								<property name="name">player_song_name</property>
+							</object>
+						</child>
+						<child>
+							<object class="GtkScale" id="player_bar">
+								<property name="visible">True</property>
+								<property name="hexpand">True</property>
+								<property name="orientation">horizontal</property>
+								<property name="draw_value">True</property>
+								<property name="value_pos">bottom</property>
+								<property name="name">player_bar</property>
+							</object>
+						</child>
+						<child>
+							<object class="GtkButton" id="previous">
+								<property name="visible">True</property>
+								<property name="name">previous</property>
+								<property name="label">󰒮</property>
+							</object>
+						</child>
+						<child>
+							<object class="GtkButton" id="play">
+								<!-- On click, interchange icon with the pause icon -->
+								<property name="visible">True</property>
+								<property name="name">play</property>
+								<property name="label">󰐊</property>
+							</object>
+						</child>
+						<child>
+							<object class="GtkButton" id="next">
+								<property name="visible">True</property>
+								<property name="name">next</property>
+								<property name="label">󰒭</property>
+							</object>
+						</child>
+						<child>
+							<object class="GtkButton" id="loop">
+								<property name="visible">True</property>
+								<property name="name">loop</property>
+								<property name="label">󰑖</property>
 							</object>
 						</child>
 					</object>

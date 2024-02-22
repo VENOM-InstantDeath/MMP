@@ -44,6 +44,8 @@ void string_append_char(string* S, char ch);
 int string_find(string* S, char ch);
 int string_rfind(string* S, char ch);
 void string_append_fmt(string* S, char* fmt, ...);
+void string_free(string* S);
+vector string_split(string* S, char sep);
 
 /*isdigit
 islower
