@@ -13,7 +13,7 @@ void _append_tag(Id3v2Tag* Tag, char* tagname, char* value) {
 }
 
 Id3v2Tag tagreader_tagstruct_init() {
-    Id3v2Tag Tags = {NULL, NULL, NULL, NULL, NULL, 0};
+    Id3v2Tag Tags = {NULL, NULL, NULL, NULL, NULL};
     return Tags;
 }
 

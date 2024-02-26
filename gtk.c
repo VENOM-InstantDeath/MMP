@@ -1,8 +1,10 @@
 #include <gtk/gtk.h>
 #include <dirent.h>
 #include <string.h>
+#include <stdlib.h>
 #include "libvector/vector.h"
 #include "tagreader/tagreader.h"
+#include "tagreader/duration.h"
 
 struct Song {
 	char* name;
@@ -13,7 +15,7 @@ struct Song {
 
 struct Album {
 	char* name;
-	char** songs;
+	vector songs;
 };
 
 struct Artist {
@@ -32,21 +34,78 @@ int endswith(char* string, char* p) {
 	return 0;
 }
 
+struct Artist* find_artist(vector* V, char* artist) {
+	for (int i=0; i<V->memsize; i++) {
+		struct Artist* _art = vector_get_generic_at(V, i);
+		if ( !strcmp( _art->name, artist) ) {
+			return _art;
+		}
+	}
+	return NULL;
+}
+
+struct Album* find_album(vector* V, char* album) {
+	for (int i=0; i<V->memsize; i++) {
+		struct Album* _alb = vector_get_generic_at(V, i);
+		if ( !strcmp( _alb->name, album) ) {
+			return _alb;
+		}
+	}
+	return NULL;
+}
+
 int scan_dir(char* path, vector* Artists) {
 	DIR* dir = opendir(path);
 	struct dirent* dt;
 	int c=0;
 	while ((dt = readdir(dir))) {
-		if (!endswith(dt->d_name, ".mp3")) continue;
+		string str = string_init(path); string_append_char(&str, '/');
+		string_append(&str, dt->d_name);
+		char* cstr = string_get_c_str(&str);
+		if (!endswith(cstr, ".mp3")) continue;
 		/*
 		 * add song to artists
 		 */
+		Id3v2Tag tag = tagreader_read_tags(cstr);
+		char* Duration = second_to_str(duration(cstr));
+		struct Song* song = malloc(sizeof(struct Song));
+		song->name = tag.TIT2; song->duration = Duration;
+		song->year = tag.TYER; song->file = dt->d_name;
+		struct Artist* _art;
+		if ((_art=find_artist(Artists, tag.TPE1)) == NULL) {
+			struct Album* album = malloc(sizeof(struct Album));
+			album->name = tag.TALB;
+			album->songs = vector_init(VGEN);
+			vector_append_generic(&album->songs, song);
+
+			_art = malloc(sizeof(struct Artist));
+			_art->name = tag.TPE1;
+			_art->albums = vector_init(VGEN);
+			vector_append_generic(&_art->albums, album);
+
+			vector_append_generic(Artists, _art);
+		} else {
+			struct Album* album;
+			if ((album = find_album(&_art->albums, tag.TALB)) == NULL) {
+				album = malloc(sizeof(struct Album));
+				album->name = tag.TALB;
+				album->songs = vector_init(VGEN);
+				vector_append_generic(&album->songs, song);
+
+				vector_append_generic(&_art->albums, album);
+			} else {
+				vector_append_generic(&album->songs, song);
+				vector_append_generic(&_art->albums, album);
+			}
+		}
 		c++;
 	}
 	return c;
 }
 
 GtkWidget* MusicItem(char* song, char* album, char* artist, char* duration) {
+	GtkWidget* main = gtk_button_new();
+	gtk_widget_set_name(main, "songbutton");
 	GtkWidget* wdg = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
 	gtk_widget_set_name(wdg, "wdg");
 	GtkWidget* vertbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
@@ -67,8 +126,9 @@ GtkWidget* MusicItem(char* song, char* album, char* artist, char* duration) {
 	gtk_container_add(GTK_CONTAINER(wdg), vertbox);
 	gtk_container_add(GTK_CONTAINER(wdg), wduration);
 	gtk_container_add(GTK_CONTAINER(wdg), songmenu);
-	gtk_widget_show_all(wdg);
-	return wdg;
+	gtk_container_add(GTK_CONTAINER(main), wdg);
+	gtk_widget_show_all(main);
+	return main;
 }
 
 void activate(GtkApplication* app, gpointer data) {
@@ -80,6 +140,10 @@ void activate(GtkApplication* app, gpointer data) {
 	GObject* songbox = gtk_builder_get_object(builder, "songbox");
 	GObject* nosongbox = gtk_builder_get_object(builder, "nosongbox");
 	GObject* nosongicon = gtk_builder_get_object(builder, "nosongicon");
+	GObject* player_bar = gtk_builder_get_object(builder, "player_bar");
+	
+	GtkAdjustment* Adj = gtk_adjustment_new(0, 0, 100, 1, 1, 0);
+	gtk_range_set_adjustment(GTK_RANGE(player_bar), Adj);
 
 	GdkPixbuf* imgbuff = gdk_pixbuf_new_from_file_at_size("media/music.png", 120, 120, NULL);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(nosongicon), imgbuff);
@@ -99,8 +163,16 @@ void activate(GtkApplication* app, gpointer data) {
 	} else {
 		/*Render list of songs on dir*/
 		gtk_widget_set_visible(GTK_WIDGET(songbox), 1);
-		gtk_container_add(GTK_CONTAINER(songbox), MusicItem("Unity", "TheFatRat", "Unity", "03:00"));
-		gtk_container_add(GTK_CONTAINER(songbox), MusicItem("Serpentine", "Disturbed", "Asylum", "04:09"));
+		for (int i=0; i<Artists.memsize; i++) {
+			struct Artist* _art = vector_get_generic_at(&Artists, i);
+			for (int e=0; e<_art->albums.memsize; e++) {
+				struct Album* album = vector_get_generic_at(&_art->albums, e);
+				for (int j=0; j<album->songs.memsize; j++) {
+					struct Song* song = vector_get_generic_at(&album->songs, j);
+					gtk_container_add(GTK_CONTAINER(songbox), MusicItem(song->name, _art->name, album->name, song->duration));
+				}
+			}
+		}
 	}
 }
 

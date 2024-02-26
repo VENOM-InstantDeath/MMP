@@ -25,6 +25,11 @@ label {
 	background-color: blue;
 }
 
+button:hover {
+	background-color: green;
+	color: green;
+}
+
 #btsec {
 	background-color: #4B4343;
 	border-radius: 0;
@@ -58,12 +63,31 @@ label {
 	border-width: 0px;
 	font-size: 20px;
 }
-
-#player_bar {
-	/*background-color: white;*/
-	color: red;
+#songbutton {
+	border-radius: 0px;
+	border-width: 0px;
 }
 
 #player {
-	background-color: green;
+	background-color: black;
+}
+
+scale trough {
+	background-color: gray;
+	color: red;
+}
+
+scale slider {
+	background-color: white;
+}
+
+scale highlight {
+	background-color: #DD1414;
+	color: red;
+}
+
+#player_song_name {
+	margin-left: 10px;
+	margin-right: 10px;
+	font-size: 18px;
 }

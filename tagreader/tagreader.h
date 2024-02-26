@@ -8,7 +8,6 @@ typedef struct {
     char* TALB; // album
     char* TYER; // year
     char* TCON; // genre
-    size_t LEN; // length
 } Id3v2Tag;
 
 Id3v2Tag tagreader_read_tags(char* path);
