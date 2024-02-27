@@ -1,5 +1,7 @@
 #include <gtk/gtk.h>
 #include <dirent.h>
+#include <math.h>
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "libvector/vector.h"
@@ -52,6 +54,28 @@ struct Album* find_album(vector* V, char* album) {
 		}
 	}
 	return NULL;
+}
+
+
+void play_pause(GtkApplication* app, gpointer data) {
+	void** _data = (void**)data;
+	FILE* P = _data[0];
+	GtkWidget* playbt = GTK_WIDGET((GObject*)_data[1]);
+	gtk_button_set_label(GTK_BUTTON(playbt), "󰏤");
+	fputs("pause\n", P);
+	fflush(P);
+}
+
+void load_song(GtkApplication* app, gpointer data) {
+	void** _data = (void**)data;
+	FILE* P = (FILE*)_data[0];
+	char* song = (char*)_data[1];
+	char* path = (char*)_data[2];
+	string s = string_init("load ");
+	string_append(&s, path); string_append_char(&s, '/');
+	string_append(&s, song); string_append_char(&s, '\n');
+	fputs(string_get_c_str(&s), P);
+	fflush(P);
 }
 
 int scan_dir(char* path, vector* Artists) {
@@ -131,16 +155,52 @@ GtkWidget* MusicItem(char* song, char* album, char* artist, char* duration) {
 	return main;
 }
 
-void activate(GtkApplication* app, gpointer data) {
+void** new_data_arr(FILE* P, char* song, char* path) {
+	void** da = malloc(sizeof(void*)*3);
+	*da = P; *(da+1) = song; *(da+2) = path;
+	return da;
+}
 
+void show_songs(GtkApplication* app, gpointer data) {
+	void** _data = (void**)data;
+	FILE* P = _data[0];
+	vector* Artists = _data[1];
+	char* PATH = _data[2];
+	GtkWidget* songbox = _data[3];
+	for (int i=0; i<Artists->memsize; i++) {
+		struct Artist* _art = vector_get_generic_at(Artists, i);
+		for (int e=0; e<_art->albums.memsize; e++) {
+			struct Album* album = vector_get_generic_at(&_art->albums, e);
+			for (int j=0; j<album->songs.memsize; j++) {
+				struct Song* song = vector_get_generic_at(&album->songs, j);
+				GtkWidget* musicItem = MusicItem(song->name, _art->name, album->name, song->duration);
+				g_signal_connect(musicItem, "clicked", G_CALLBACK(load_song), new_data_arr(P, song->file, PATH));
+				gtk_container_add(GTK_CONTAINER(songbox), musicItem);
+			}
+		}
+	}
+}
+
+void activate(GtkApplication* app, gpointer data) {
+	char* PATH = "music";
+	FILE* P = (FILE*)data;
 	GtkBuilder* builder = gtk_builder_new();
 	GError* error = NULL;
 	int res = gtk_builder_add_from_file(builder, "gtk.ui", &error);
 	GObject* window = gtk_builder_get_object(builder, "mainwindow");
+
 	GObject* songbox = gtk_builder_get_object(builder, "songbox");
 	GObject* nosongbox = gtk_builder_get_object(builder, "nosongbox");
+
 	GObject* nosongicon = gtk_builder_get_object(builder, "nosongicon");
+
 	GObject* player_bar = gtk_builder_get_object(builder, "player_bar");
+	GObject* playbt = gtk_builder_get_object(builder, "play");
+
+	GObject* section1 = gtk_builder_get_object(builder, "section1");
+	GObject* section2 = gtk_builder_get_object(builder, "section2");
+	GObject* section3 = gtk_builder_get_object(builder, "section3");
+	GObject* section4 = gtk_builder_get_object(builder, "section4");
 	
 	GtkAdjustment* Adj = gtk_adjustment_new(0, 0, 100, 1, 1, 0);
 	gtk_range_set_adjustment(GTK_RANGE(player_bar), Adj);
@@ -158,29 +218,26 @@ void activate(GtkApplication* app, gpointer data) {
 	Playlists.songs = vector_init(VGEN);
 	vector Artists = vector_init(VGEN);
 
-	if (!scan_dir("music", &Artists)) {
+	void* data_arr[] = {P, &Artists, PATH, songbox};
+	void** pause_arr = malloc(sizeof(void*));
+	pause_arr[0]=P;pause_arr[1]=playbt;
+
+	if (!scan_dir(PATH, &Artists)) {
 		gtk_widget_set_visible(GTK_WIDGET(nosongbox), 1);
 	} else {
 		/*Render list of songs on dir*/
-		gtk_widget_set_visible(GTK_WIDGET(songbox), 1);
-		for (int i=0; i<Artists.memsize; i++) {
-			struct Artist* _art = vector_get_generic_at(&Artists, i);
-			for (int e=0; e<_art->albums.memsize; e++) {
-				struct Album* album = vector_get_generic_at(&_art->albums, e);
-				for (int j=0; j<album->songs.memsize; j++) {
-					struct Song* song = vector_get_generic_at(&album->songs, j);
-					gtk_container_add(GTK_CONTAINER(songbox), MusicItem(song->name, _art->name, album->name, song->duration));
-				}
-			}
-		}
+		gtk_widget_set_visible(GTK_WIDGET(songbox), 1);	
+		gtk_widget_set_name(GTK_WIDGET(section1), "btsec2");
+		g_signal_connect(GTK_WIDGET(playbt), "clicked", G_CALLBACK(play_pause), pause_arr);
+		show_songs(app, data_arr);
 	}
 }
 
 int main(int argc, char** argv) {
 	GtkApplication* app = gtk_application_new("org.hu.gtktest", G_APPLICATION_DEFAULT_FLAGS);
 	int status;
-
-	g_signal_connect(app, "activate", G_CALLBACK(activate), NULL);
+	FILE* P = popen("mpg123 -R", "w");
+	g_signal_connect(app, "activate", G_CALLBACK(activate), P);
 
 	status = g_application_run(G_APPLICATION(app), argc, argv);
 

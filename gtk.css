@@ -18,20 +18,19 @@ label {
 	font-size: 20px;
 }
 
-#sections {
-	background-color: #4B4343;
-}
 #bar {
 	background-color: blue;
 }
 
-button:hover {
-	background-color: green;
-	color: green;
-}
-
 #btsec {
 	background-color: #4B4343;
+	border-radius: 0;
+	border-right: none;
+	border-bottom: none;
+}
+
+#btsec2 {
+	background-color: black;
 	border-radius: 0;
 	border-right: none;
 	border-bottom: none;
