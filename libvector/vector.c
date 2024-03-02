@@ -5,7 +5,7 @@
 #include <math.h>
 #include "vector.h"
 
-#define VERSION "1.1.0"
+#define VERSION "1.1.1"
 
 char* _error_messages[] = {
 	"NULL_STR: Se esperaba un c-string pero se obtuvo un puntero nulo",
@@ -94,7 +94,12 @@ void string_append(string* S, char* str) {
 }
 
 void string_append_int(string* S, int num) {
-	if (num < 0) {
+	if (!num) {
+		string_grow(S, 1);
+		string_asign_at(S, -1, '0'); 
+		return;
+	}
+	else if (num < 0) {
 		string_grow(S, 1);
 		string_asign_at(S, -1, '-');
 	}
