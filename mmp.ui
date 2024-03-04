@@ -1,0 +1,239 @@
+<interface>
+	<object id="mainwindow" class="GtkWindow">
+		<property name="title">MMP</property>
+		<property name="default-width">650</property>
+		<property name="default-height">500</property>
+		<property name="name">mainwindow</property>
+		<property name="visible">True</property>
+		<child>
+			<object id="mainlayout" class="GtkBox">
+				<property name="orientation">vertical</property>
+				<property name="visible">True</property>
+				<property name="name">mainlayout</property>
+				<child>
+					<object id="bar" class="GtkBox">
+						<property name="orientation">horizontal</property>
+						<property name="homogeneous">False</property>
+						<property name="visible">True</property>
+						<property name="name">bar</property>
+						<child>
+							<object class="GtkButton" id="btmenu">
+								<property name="visible">True</property>
+								<property name="name">btmenu</property>
+								<child>
+									<object class="GtkLabel">
+										<property name="label">Menu</property>
+										<property name="visible">True</property>
+										<property name="name">btlab</property>
+									</object>
+								</child>
+							</object>
+						</child>
+						<child>
+							<object class="GtkLabel" id="title">
+								<property name="label">Miuler Music player</property>
+								<property name="visible">True</property>
+								<property name="name">title</property>
+								<property name="hexpand">True</property>
+							</object>
+						</child>
+					</object>
+				</child>
+				<child>
+					<object class="GtkBox" id="sections">
+						<property name="orientation">horizontal</property>
+						<property name="visible">True</property>
+						<property name="name">sections</property>
+						<child>
+							<object class="GtkButton" id="section1">
+								<property name="label">Canciones</property>
+								<property name="visible">True</property>
+								<property name="name">btsec</property>
+								<property name="hexpand">True</property>
+							</object>
+						</child>
+						<child>
+							<object class="GtkButton" id="section2">
+								<property name="label">Álbumes</property>
+								<property name="visible">True</property>
+								<property name="name">btsec</property>
+								<property name="hexpand">True</property>
+							</object>
+						</child>
+						<child>
+							<object class="GtkButton" id="section3">
+								<property name="label">Artistas</property>
+								<property name="visible">True</property>
+								<property name="name">btsec</property>
+								<property name="hexpand">True</property>
+							</object>
+						</child>
+						<child>
+							<object class="GtkButton" id="section4">
+								<property name="label">Playlists</property>
+								<property name="visible">True</property>
+								<property name="name">btsec</property>
+								<property name="hexpand">True</property>
+							</object>
+						</child>
+					</object>
+				</child>
+				<child>
+					<object class="GtkScrolledWindow">
+					<object class="GtkBox" id="songbox">
+						<!-- Song section -->
+						<property name="visible">False</property>
+						<property name="hexpand">True</property>
+						<property name="vexpand">True</property>
+						<property name="orientation">vertical</property>
+					</object>
+					</object>
+				</child>
+				<child>
+					<object class="GtkBox" id="albumbox">
+						<!-- Album section -->
+						<property name="visible">False</property>
+						<property name="hexpand">True</property>
+						<property name="vexpand">True</property>
+						<property name="orientation">vertical</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkBox" id="inalbumbox">
+						<!-- songs in an album -->
+						<property name="visible">False</property>
+						<property name="hexpand">True</property>
+						<property name="vexpand">True</property>
+						<property name="orientation">vertical</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkBox" id="artistbox">
+						<!-- Artist section -->
+						<property name="visible">False</property>
+						<property name="hexpand">True</property>
+						<property name="vexpand">True</property>
+						<property name="orientation">vertical</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkBox" id="inartistbox">
+						<!-- albums from an artist -->
+						<property name="visible">False</property>
+						<property name="hexpand">True</property>
+						<property name="vexpand">True</property>
+						<property name="orientation">vertical</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkBox" id="playlistbox">
+						<!-- Playlists section -->
+						<property name="visible">False</property>
+						<property name="hexpand">True</property>
+						<property name="vexpand">True</property>
+						<property name="orientation">vertical</property>
+					</object>
+				</child>
+				<child>
+					<object class="GtkBox" id="nosongbox">
+						<property name="visible">False</property>
+						<property name="hexpand">True</property>
+						<property name="vexpand">True</property>}
+						<child>
+							<object class="GtkAspectFrame">
+								<property name="name">nosongbox</property>
+								<property name="visible">True</property>
+								<property name="vexpand">False</property>
+								<property name="hexpand">True</property>
+								<property name="valign">center</property>
+								<property name="halign">center</property>
+								<property name="height-request">100</property>
+								<child>
+									<object class="GtkBox">
+										<property name="visible">True</property>
+										<property name="orientation">vertical</property>
+										<child>
+											<object class="GtkImage" id="nosongicon">
+												<property name="visible">True</property>
+												<property name="height-request">100</property>
+												<property name="width-request">100</property>
+											</object>
+										</child>
+										<child>
+											<object class="GtkLabel">
+												<property name="visible">True</property>
+												<property name="label">No hay nada por aquí</property>
+												<property name="name">nosonglabel1</property>
+											</object>
+										</child>
+										<child>
+											<object class="GtkLabel">
+												<property name="visible">True</property>
+												<property name="label">Añade música en el directorio raíz</property>
+												<property name="name">nosonglabel2</property>
+											</object>
+										</child>
+									</object>
+								</child>
+							</object>
+						</child>
+					</object>
+				</child>
+				<child>
+					<object class="GtkBox" id="player">
+						<property name="visible">True</property>
+						<property name="orientation">horizontal</property>
+						<property name="name">player</property>
+						<child>
+							<object class="GtkLabel" id="player_song_name">
+								<property name="visible">True</property>
+								<property name="label">-</property>
+								<property name="name">player_song_name</property>
+							</object>
+						</child>
+						<child>
+							<object class="GtkScale" id="player_bar">
+								<property name="visible">True</property>
+								<property name="hexpand">True</property>
+								<property name="orientation">horizontal</property>
+								<property name="draw_value">True</property>
+								<property name="value_pos">left</property>
+								<property name="digits">0</property>
+								<property name="name">player_bar</property>
+							</object>
+						</child>
+						<child>
+							<object class="GtkButton" id="previous">
+								<property name="visible">True</property>
+								<property name="name">previous</property>
+								<property name="label">󰒮</property>
+							</object>
+						</child>
+						<child>
+							<object class="GtkButton" id="play">
+								<!-- On click, interchange icon with the pause icon -->
+								<property name="visible">True</property>
+								<property name="name">play</property>
+								<property name="label">󰐊</property>
+							</object>
+						</child>
+						<child>
+							<object class="GtkButton" id="next">
+								<property name="visible">True</property>
+								<property name="name">next</property>
+								<property name="label">󰒭</property>
+							</object>
+						</child>
+						<child>
+							<object class="GtkButton" id="loop">
+								<property name="visible">True</property>
+								<property name="name">loop</property>
+								<property name="label">󰑖</property>
+							</object>
+						</child>
+					</object>
+				</child>
+			</object>
+		</child>
+	</object>
+</interface>
