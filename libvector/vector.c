@@ -5,7 +5,7 @@
 #include <math.h>
 #include "vector.h"
 
-#define VERSION "1.1.1"
+#define VERSION "1.1.2"
 
 char* _error_messages[] = {
 	"NULL_STR: Se esperaba un c-string pero se obtuvo un puntero nulo",
@@ -172,7 +172,7 @@ void string_append_fmt(string* S, char* fmt, ...) {
 			case 'd':
 				{
 					int num = va_arg(argv, int);
-					int digits = floor(log10(num))+1;
+					int digits = num ? floor(log10(num))+1 : 1;
 					if (num < 0) {digits++;}
 					if (digits >= 2) {
 						size_t end = Fmt.memsize;
@@ -182,6 +182,10 @@ void string_append_fmt(string* S, char* fmt, ...) {
 					else {
 						string_shift_left(&Fmt, start+2, Fmt.memsize, digits);
 						string_shrink(&Fmt, digits);
+					}
+					if (!num) {
+						string_asign_at(&Fmt, start, '0');
+						break;
 					}
 					if (num < 0) {
 						string_asign_at(&Fmt, start, '-');
