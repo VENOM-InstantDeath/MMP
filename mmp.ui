@@ -80,22 +80,30 @@
 				</child>
 				<child>
 					<object class="GtkScrolledWindow">
-					<object class="GtkBox" id="songbox">
-						<!-- Song section -->
-						<property name="visible">False</property>
-						<property name="hexpand">True</property>
-						<property name="vexpand">True</property>
-						<property name="orientation">vertical</property>
-					</object>
+						<property name="visible">True</property>
+						<child>
+							<object class="GtkBox" id="songbox">
+								<!-- Song section -->
+								<property name="visible">False</property>
+								<property name="hexpand">True</property>
+								<property name="vexpand">True</property>
+								<property name="orientation">vertical</property>
+							</object>
+						</child>
 					</object>
 				</child>
 				<child>
-					<object class="GtkBox" id="albumbox">
-						<!-- Album section -->
-						<property name="visible">False</property>
-						<property name="hexpand">True</property>
-						<property name="vexpand">True</property>
-						<property name="orientation">vertical</property>
+					<object class="GtkScrolledWindow">
+						<property name="visible">True</property>
+						<child>
+							<object class="GtkBox" id="albumbox">
+								<!-- Album section -->
+								<property name="visible">False</property>
+								<property name="hexpand">True</property>
+								<property name="vexpand">True</property>
+								<property name="orientation">vertical</property>
+							</object>
+						</child>
 					</object>
 				</child>
 				<child>
@@ -108,12 +116,17 @@
 					</object>
 				</child>
 				<child>
-					<object class="GtkBox" id="artistbox">
-						<!-- Artist section -->
-						<property name="visible">False</property>
-						<property name="hexpand">True</property>
-						<property name="vexpand">True</property>
-						<property name="orientation">vertical</property>
+					<object class="GtkScrolledWindow">
+						<property name="visible">True</property>
+						<child>
+							<object class="GtkBox" id="artistbox">
+								<!-- Artist section -->
+								<property name="visible">False</property>
+								<property name="hexpand">True</property>
+								<property name="vexpand">True</property>
+								<property name="orientation">vertical</property>
+							</object>
+						</child>
 					</object>
 				</child>
 				<child>
@@ -126,12 +139,17 @@
 					</object>
 				</child>
 				<child>
-					<object class="GtkBox" id="playlistbox">
-						<!-- Playlists section -->
-						<property name="visible">False</property>
-						<property name="hexpand">True</property>
-						<property name="vexpand">True</property>
-						<property name="orientation">vertical</property>
+					<object class="GtkScrolledWindow">
+						<property name="visible">True</property>
+						<child>
+							<object class="GtkBox" id="playlistbox">
+								<!-- Playlists section -->
+								<property name="visible">False</property>
+								<property name="hexpand">True</property>
+								<property name="vexpand">True</property>
+								<property name="orientation">vertical</property>
+							</object>
+						</child>
 					</object>
 				</child>
 				<child>
